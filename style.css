@@ -1,0 +1,25 @@
+/* Estilos personalizados para Dinámica de los Cubos */
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .print-break {
+    page-break-before: always;
+  }
+  body {
+    background: white;
+  }
+  a[href]:after {
+    content: '' !important;
+  }
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+table input {
+  width: 4rem;
+  text-align: center;
+}
