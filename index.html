@@ -1,287 +1,75 @@
-A continuación tienes **tres ficheros** (HTML, JS y CSS) para la *Fase 1*: Header, navegación mínima, **Preparación** con tabla de materiales editable (sin lápices) y **Temporizador** funcional. En siguientes pasos añadimos Registro de cubos/eventos, Debate y Exportación si lo deseas.
-
----
-
-### 1) `dinamica-cubos.html`
-
-```html
 <!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dinámica de los Cubos – App de Aula</title>
-  <link rel="stylesheet" href="dinamica-cubos.css" />
-  <!-- TailwindCSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 text-slate-800 min-h-screen">
-  <div class="max-w-7xl mx-auto p-4 sm:p-6">
-    <!-- Header -->
-    <header class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-6">
-      <div>
-        <h1 class="text-3xl font-extrabold tracking-tight">Dinámica de los Cubos</h1>
-        <p class="text-sm text-slate-600">Simulación sobre interdependencias, comercio y solidaridad.</p>
-      </div>
-      <div class="no-print flex flex-wrap gap-2">
-        <button id="btnImprimir" class="px-3 py-2 rounded-xl bg-slate-900 text-white text-sm">Imprimir</button>
-        <button id="btnGuardarLS" class="px-3 py-2 rounded-xl bg-slate-200 text-slate-800 text-sm">Guardar</button>
-        <button id="btnBorrarLS" class="px-3 py-2 rounded-xl bg-rose-100 text-rose-700 text-sm">Borrar guardado</button>
-      </div>
-    </header>
+<tbody id="tbodyMateriales"></tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
 
-    <!-- Navegación mínima -->
-    <nav class="no-print sticky top-0 z-10 bg-slate-50/80 backdrop-blur border rounded-2xl p-2 mb-6 flex flex-wrap gap-2">
-      <a href="#config" class="px-3 py-1.5 rounded-xl bg-white border text-sm">1) Preparación</a>
-      <a href="#juego" class="px-3 py-1.5 rounded-xl bg-white border text-sm">2) Juego</a>
-    </nav>
 
-    <!-- Preparación -->
-    <section id="config" class="mb-10">
-      <h2 class="text-2xl font-bold mb-3">1) Preparación</h2>
-      <div class="grid md:grid-cols-3 gap-4">
-        <div class="bg-white rounded-2xl border p-4 flex flex-col gap-3">
-          <label class="text-sm font-semibold">Número de equipos</label>
-          <input id="numGrupos" type="number" min="2" max="12" value="6" class="w-32 px-3 py-2 rounded-xl border" />
+<!-- Juego -->
+<section id="juego" class="mb-10">
+<h2 class="text-2xl font-bold mb-3">2) Juego</h2>
+<div class="bg-white rounded-2xl border p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+<div class="flex items-center gap-3">
+<label class="text-sm">Minutos:</label>
+<input id="minutos" type="number" min="1" value="30" class="w-24 px-3 py-2 rounded-xl border" />
+</div>
+<div class="flex items-center gap-2">
+<button id="btnIniciar" class="px-3 py-2 rounded-xl bg-green-600 text-white text-sm">Iniciar</button>
+<button id="btnPausar" class="px-3 py-2 rounded-xl bg-yellow-400 text-slate-900 text-sm">Pausar</button>
+<button id="btnReanudar" class="px-3 py-2 rounded-xl bg-blue-600 text-white text-sm">Reanudar</button>
+<button id="btnFinalizar" class="px-3 py-2 rounded-xl bg-rose-600 text-white text-sm">Finalizar</button>
+</div>
+<div class="text-3xl font-extrabold tabular-nums" id="displayTiempo">00:30:00</div>
+</div>
+</section>
 
-          <label class="text-sm font-semibold">Plantilla de reparto</label>
-          <select id="plantilla" class="px-3 py-2 rounded-xl border">
-            <option value="6equipos">6 equipos</option>
-            <option value="4equipos">4 equipos (A–D)</option>
-            <option value="vacia">Personalizada (vacía)</option>
-          </select>
 
-          <div class="flex flex-wrap gap-2 pt-2">
-            <button id="btnAplicarPlantilla" class="px-3 py-2 rounded-xl bg-indigo-600 text-white text-sm">Aplicar plantilla</button>
-            <button id="btnReiniciar" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-800 text-sm">Reiniciar tabla</button>
-          </div>
+<!-- Registro -->
+<section id="registro" class="mb-10">
+<h2 class="text-2xl font-bold mb-3">3) Registro de Producción</h2>
+<div class="bg-white rounded-2xl border p-4">
+<table class="min-w-full text-sm">
+<thead>
+<tr class="bg-slate-100 text-slate-700">
+<th class="p-2">Equipo</th>
+<th class="p-2">Cubos Válidos</th>
+<th class="p-2">Calidad (0–5)</th>
+<th class="p-2">Puntos</th>
+</tr>
+</thead>
+<tbody id="tbodyProduccion"></tbody>
+</table>
+</div>
+</section>
 
-          <p class="mt-2 text-xs text-slate-600">Materiales: <strong>Cartulina</strong>, <strong>Tijeras</strong>, <strong>Reglas</strong>, <strong>Celo/Goma</strong>.</p>
-        </div>
 
-        <div class="md:col-span-2 bg-white rounded-2xl border p-4">
-          <h3 class="font-semibold mb-2">Tabla de reparto de materiales (editable)</h3>
-          <div class="overflow-auto">
-            <table class="min-w-full text-sm">
-              <thead>
-                <tr class="bg-slate-100 text-slate-700">
-                  <th class="p-2 text-left">Equipo</th>
-                  <th class="p-2 text-left">Cartulina</th>
-                  <th class="p-2 text-left">Tijeras</th>
-                  <th class="p-2 text-left">Reglas</th>
-                  <th class="p-2 text-left">Celo/Goma</th>
-                  <th class="p-2 text-left">Notas</th>
-                </tr>
-              </thead>
-              <tbody id="tbodyMateriales"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
+<!-- Eventos -->
+<section id="eventos" class="mb-10">
+<h2 class="text-2xl font-bold mb-3">4) Bitácora de Eventos</h2>
+<div class="bg-white rounded-2xl border p-4 flex flex-col gap-3">
+<div class="flex flex-wrap gap-2 items-center">
+<select id="eventoEquipo" class="px-3 py-2 rounded-xl border"></select>
+<select id="eventoTipo" class="px-3 py-2 rounded-xl border">
+<option value="trueque">Trueque</option>
+<option value="donacion">Donación</option>
+<option value="alianza">Alianza</option>
+<option value="sancion">Sanción</option>
+</select>
+<input id="eventoDetalle" placeholder="Detalles" class="px-3 py-2 rounded-xl border flex-1" />
+<button id="btnAgregarEvento" class="px-3 py-2 rounded-xl bg-indigo-600 text-white text-sm">Añadir</button>
+</div>
+<ul id="listaEventos" class="list-disc pl-6 text-sm"></ul>
+</div>
+</section>
 
-    <!-- Juego (Temporizador) -->
-    <section id="juego" class="mb-10">
-      <h2 class="text-2xl font-bold mb-3">2) Juego</h2>
-      <div class="bg-white rounded-2xl border p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <label class="text-sm">Minutos:</label>
-          <input id="minutos" type="number" min="1" value="30" class="w-24 px-3 py-2 rounded-xl border" />
-        </div>
-        <div class="flex items-center gap-2">
-          <button id="btnIniciar" class="px-3 py-2 rounded-xl bg-green-600 text-white text-sm">Iniciar</button>
-          <button id="btnPausar" class="px-3 py-2 rounded-xl bg-yellow-400 text-slate-900 text-sm">Pausar</button>
-          <button id="btnReanudar" class="px-3 py-2 rounded-xl bg-blue-600 text-white text-sm">Reanudar</button>
-          <button id="btnFinalizar" class="px-3 py-2 rounded-xl bg-rose-600 text-white text-sm">Finalizar</button>
-        </div>
-        <div class="text-3xl font-extrabold tabular-nums" id="displayTiempo">00:30:00</div>
-      </div>
-      <p class="text-xs text-slate-600 mt-2">El marcador continúa en pausa al imprimir.</p>
-    </section>
 
-    <!-- Pie -->
-    <footer class="text-xs text-slate-500 mb-6">
-      <p>Creado para uso en aula por profesores y profesoras. Puedes editar este archivo y adaptarlo a tu centro.</p>
-    </footer>
-  </div>
-
-  <script src="dinamica-cubos.js"></script>
+<footer class="text-xs text-slate-500 mb-6">
+<p>Creado para uso en aula. Adaptable a cada centro.</p>
+</footer>
+</div>
+<script src="dinamica-cubos.js"></script>
 </body>
 </html>
-```
-
----
-
-### 2) `dinamica-cubos.js`
-
-```javascript
-// ===== Utilidades =====
-const $ = s => document.querySelector(s);
-const $$ = s => Array.from(document.querySelectorAll(s));
-
-const state = {
-  materiales: [], // [{equipo, cartulina, tijeras, reglas, celo, notas}]
-  temporizador: { totalMs: 30*60*1000, restanteMs: 30*60*1000, tick:null, corriendo:false }
-};
-
-function toInt(v, def=0){
-  const n = parseInt(String(v).replace(/,/g,'').trim(),10);
-  return Number.isFinite(n)? n : def;
-}
-function fmtMs(ms){
-  const s = Math.max(0, Math.floor(ms/1000));
-  const hh = String(Math.floor(s/3600)).padStart(2,'0');
-  const mm = String(Math.floor((s%3600)/60)).padStart(2,'0');
-  const ss = String(s%60).padStart(2,'0');
-  return `${hh}:${mm}:${ss}`;
-}
-
-// ===== Tabla de Materiales =====
-function plantilla6Equipos(n){
-  const base = [
-    {equipo:'1', cartulina:3, tijeras:1, reglas:2, celo:2, notas:''},
-    {equipo:'2', cartulina:2, tijeras:1, reglas:1, celo:1, notas:''},
-    {equipo:'3', cartulina:1, tijeras:0, reglas:0, celo:1, notas:'Sin tijeras'},
-    {equipo:'4', cartulina:1, tijeras:0, reglas:0, celo:0, notas:''},
-    {equipo:'5', cartulina:0, tijeras:1, reglas:0, celo:0, notas:''},
-    {equipo:'6', cartulina:0, tijeras:0, reglas:1, celo:0, notas:''}
-  ];
-  return Array.from({length:n}).map((_,i)=> base[i] ? {...base[i], equipo:String(i+1)} : {equipo:String(i+1), cartulina:0, tijeras:0, reglas:0, celo:0, notas:''});
-}
-function plantilla4Equipos(n){
-  const base = [
-    {equipo:'A', cartulina:1, tijeras:3, reglas:1, celo:1, notas:''},
-    {equipo:'B', cartulina:1, tijeras:1, reglas:1, celo:3, notas:''},
-    {equipo:'C', cartulina:7, tijeras:0, reglas:1, celo:1, notas:''},
-    {equipo:'D', cartulina:5, tijeras:0, reglas:0, celo:1, notas:''}
-  ];
-  return Array.from({length:Math.min(n,26)}).map((_,i)=> base[i] ? {...base[i]} : {equipo:String.fromCharCode(65+i), cartulina:0, tijeras:0, reglas:0, celo:0, notas:''});
-}
-
-function renderMateriales(){
-  const tbody = $('#tbodyMateriales');
-  tbody.innerHTML = '';
-  state.materiales.forEach((m, idx)=>{
-    const tr = document.createElement('tr');
-    if(idx%2===0) tr.className = 'bg-white'; else tr.className = 'bg-slate-50';
-    tr.innerHTML = `
-      <td class="p-2 font-semibold">${m.equipo}</td>
-      <td class="p-1"><input data-k="cartulina" data-i="${idx}" value="${m.cartulina}" class="w-20 px-2 py-1 rounded border"></td>
-      <td class="p-1"><input data-k="tijeras"   data-i="${idx}" value="${m.tijeras}"   class="w-20 px-2 py-1 rounded border"></td>
-      <td class="p-1"><input data-k="reglas"    data-i="${idx}" value="${m.reglas}"    class="w-20 px-2 py-1 rounded border"></td>
-      <td class="p-1"><input data-k="celo"      data-i="${idx}" value="${m.celo}"      class="w-20 px-2 py-1 rounded border"></td>
-      <td class="p-1"><input data-k="notas"     data-i="${idx}" value="${m.notas||''}" class="w-full px-2 py-1 rounded border"></td>
-    `;
-    tbody.appendChild(tr);
-  });
-  tbody.querySelectorAll('input').forEach(inp=>{
-    inp.addEventListener('input', e=>{
-      const i = +e.target.dataset.i;
-      const k = e.target.dataset.k;
-      const val = (k==='notas') ? e.target.value : toInt(e.target.value, 0);
-      state.materiales[i][k] = val;
-      guardarEstado();
-    });
-  });
-}
-
-function aplicarPlantilla(){
-  const n = toInt($('#numGrupos').value, 6);
-  const sel = $('#plantilla').value;
-  if(sel==='6equipos') state.materiales = plantilla6Equipos(n);
-  else if(sel==='4equipos') state.materiales = plantilla4Equipos(n);
-  else state.materiales = Array.from({length:n}).map((_,i)=>({equipo:String(i+1), cartulina:0, tijeras:0, reglas:0, celo:0, notas:''}));
-  renderMateriales();
-}
-
-function reiniciarTabla(){
-  state.materiales = [];
-  renderMateriales();
-  guardarEstado();
-}
-
-// ===== Temporizador =====
-function setTiempoMinutos(min){
-  const ms = Math.max(1, toInt(min))*60*1000;
-  state.temporizador = { ...state.temporizador, totalMs: ms, restanteMs: ms };
-  actualizarDisplayTiempo();
-}
-function actualizarDisplayTiempo(){
-  $('#displayTiempo').textContent = fmtMs(state.temporizador.restanteMs);
-}
-function tick(){
-  if(!state.temporizador.corriendo) return;
-  state.temporizador.restanteMs -= 1000;
-  if(state.temporizador.restanteMs <= 0){
-    state.temporizador.restanteMs = 0; state.temporizador.corriendo=false; clearInterval(state.temporizador.tick);
-    alert('¡Tiempo!');
-  }
-  actualizarDisplayTiempo();
-}
-
-// ===== Persistencia mínima =====
-function guardarEstado(){
-  localStorage.setItem('cubos_f1', JSON.stringify(state));
-}
-function cargarEstado(){
-  const raw = localStorage.getItem('cubos_f1');
-  if(!raw) return false;
-  try{ Object.assign(state, JSON.parse(raw)); return true; }catch{ return false; }
-}
-
-// ===== Inicialización =====
-window.addEventListener('DOMContentLoaded', ()=>{
-  // botones superiores
-  $('#btnImprimir')?.addEventListener('click', ()=>window.print());
-  $('#btnGuardarLS')?.addEventListener('click', guardarEstado);
-  $('#btnBorrarLS')?.addEventListener('click', ()=>{ localStorage.removeItem('cubos_f1'); alert('Guardado eliminado.'); });
-
-  // preparación
-  $('#btnAplicarPlantilla').addEventListener('click', aplicarPlantilla);
-  $('#btnReiniciar').addEventListener('click', reiniciarTabla);
-  $('#numGrupos').addEventListener('change', aplicarPlantilla);
-  $('#plantilla').addEventListener('change', aplicarPlantilla);
-
-  // temporizador
-  $('#minutos').addEventListener('change', ()=> setTiempoMinutos($('#minutos').value));
-  $('#btnIniciar').addEventListener('click', ()=>{
-    setTiempoMinutos($('#minutos').value);
-    if(state.temporizador.tick) clearInterval(state.temporizador.tick);
-    state.temporizador.corriendo = true;
-    state.temporizador.tick = setInterval(tick, 1000);
-  });
-  $('#btnPausar').addEventListener('click', ()=>{ state.temporizador.corriendo=false; });
-  $('#btnReanudar').addEventListener('click', ()=>{
-    if(state.temporizador.tick) clearInterval(state.temporizador.tick);
-    state.temporizador.corriendo=true; state.temporizador.tick=setInterval(tick,1000);
-  });
-  $('#btnFinalizar').addEventListener('click', ()=>{ state.temporizador.corriendo=false; clearInterval(state.temporizador.tick); alert('Juego finalizado'); });
-
-  // estado
-  if(!cargarEstado()) aplicarPlantilla();
-  actualizarDisplayTiempo();
-});
-```
-
----
-
-### 3) `dinamica-cubos.css`
-
-```css
-/* Estilos personalizados y para impresión */
-@media print {
-  .no-print{ display:none !important; }
-  .print-break{ page-break-before: always; }
-  body{ background:white; }
-  a[href]:after{ content:'' !important; }
-}
-:root{ color-scheme: light dark; }
-
-/* Inputs compactos dentro de tablas */
-table input{ width:4.5rem; text-align:center; }
-```
-
----
-
-¿Seguimos con la **Fase 2** (añadir Registro de producción y Eventos) o prefieres que inserte primero la sección de **Reglas y roles** con el check de “solo delegada/o”? 😊
 
