@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dinámica de los Cubos - Versión Avanzada</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dinamica-cubos.css">
+</head>
+<body class="bg-gray-100 min-h-screen p-4 sm:p-6">
+  <div id="app-container" class="w-full max-w-7xl mx-auto">
+
+    <!-- Pantalla de Configuración -->
+    <section id="setup-screen" class="screen active">
+      <div class="card p-6 mb-6">
+        <h1 class="text-3xl font-extrabold mb-4">Dinámica de los Cubos</h1>
+        <p class="mb-4 text-gray-600">Simulación sobre interdependencias, comercio y solidaridad.</p>
+
+        <div class="grid sm:grid-cols-3 gap-4 mb-4">
+          <div>
+            <label for="num-grupos" class="font-semibold">Número de equipos</label>
+            <input id="num-grupos" type="number" value="6" min="2" max="12" class="w-full p-2 rounded border">
+          </div>
+          <div>
+            <label for="plantilla" class="font-semibold">Plantilla</label>
+            <select id="plantilla" class="w-full p-2 rounded border">
+              <option value="6paises">6 Grupos (asimétricos)</option>
+              <option value="4equipos">4 Equipos A-D</option>
+              <option value="vacia">Personalizada (vacía)</option>
+            </select>
+          </div>
+          <div class="flex items-end">
+            <button id="apply-template-btn" class="btn btn-primary w-full">Aplicar</button>
+          </div>
+        </div>
+
+        <div class="overflow-auto">
+          <table class="min-w-full border text-sm">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="p-2 border">Equipo</th>
+                <th class="p-2 border">Cartulina</th>
+                <th class="p-2 border">Tijeras</th>
+                <th class="p-2 border">Reglas</th>
+                <th class="p-2 border">Lápices</th>
+                <th class="p-2 border">Celo/Goma</th>
+              </tr>
+            </thead>
+            <tbody id="materials-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <button id="next-to-game-btn" class="btn btn-primary">Comenzar juego</button>
+    </section>
+
+    <!-- Pantalla de Juego -->
+    <section id="game-screen" class="screen">
+      <div class="flex flex-col gap-6">
+
+        <div class="card p-6">
+          <h2 class="text-2xl font-bold mb-2">Temporizador</h2>
+          <div class="flex gap-2 mb-2">
+            <input id="minutos" type="number" value="30" min="1" class="w-24 p-2 rounded border"> minutos
+          </div>
+          <div class="timer mb-4" id="timer-display">30:00</div>
+          <div class="flex gap-2 flex-wrap">
+            <button id="btnIniciar" class="btn btn-primary">Iniciar</button>
+            <button id="btnPausar" class="btn btn-secondary">Pausar</button>
+            <button id="btnReanudar" class="btn btn-secondary">Reanudar</button>
+            <button id="btnFinalizar" class="btn btn-secondary">Finalizar</button>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <h2 class="text-2xl font-bold mb-2">Registro de producción</h2>
+          <div class="overflow-auto">
+            <table class="min-w-full border text-sm">
+              <thead class="bg-gray-200">
+                <tr>
+                  <th class="p-2 border">Equipo</th>
+                  <th class="p-2 border">Cubos</th>
+                  <th class="p-2 border">Calidad (1-5)</th>
+                  <th class="p-2 border">Puntos Coop.</th>
+                  <th class="p-2 border">Total</th>
+                </tr>
+              </thead>
+              <tbody id="results-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <h2 class="text-2xl font-bold mb-2">Eventos entre equipos</h2>
+          <div class="grid sm:grid-cols-4 gap-2 mb-4">
+            <select id="evtTipo" class="p-2 rounded border">
+              <option>Trueque</option>
+              <option>Donación</option>
+              <option>Alianza</option>
+              <option>Sanción</option>
+            </select>
+            <input id="evtDe" placeholder="De..." class="p-2 rounded border">
+            <input id="evtA" placeholder="A..." class="p-2 rounded border">
+            <input id="evtDescripcion" placeholder="Descripción" class="p-2 rounded border">
+          </div>
+          <button id="btnAgregarEvento" class="btn btn-primary mb-4">Agregar evento</button>
+          <ul id="listaEventos" class="list-disc pl-6 text-sm"></ul>
+        </div>
+
+        <button id="btn-show-help" class="btn btn-secondary">Ver Reglas</button>
+        <button id="reset-game-btn" class="btn btn-secondary">Reiniciar</button>
+      </div>
+    </section>
+
+    <!-- Pantalla de Debate Final -->
+    <section id="debrief-screen" class="screen">
+      <div class="card p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-4">Resultados Finales</h2>
+        <div id="final-results" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+
+      <div class="card p-6">
+        <h2 class="text-2xl font-bold mb-4">Preguntas para el debate</h2>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>¿Cómo os habéis sentido con los recursos disponibles?</li>
+          <li>¿Qué estrategias de cooperación o competencia han surgido?</li>
+          <li>¿Qué paralelismos encontráis con la sociedad real?</li>
+          <li>¿Cómo influye la distribución desigual de recursos en los resultados?</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Modal de ayuda -->
+    <div id="help-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+      <div class="bg-white p-6 rounded-lg max-w-lg w-full relative">
+        <button id="btn-close-help" class="absolute top-2 right-2 text-gray-500">✖</button>
+        <h2 class="text-xl font-bold mb-2">Reglas del juego</h2>
+        <p class="text-sm text-gray-600 mb-2">Cada equipo debe construir cubos con los materiales disponibles. Pueden negociar, intercambiar o donar materiales. Los puntos se calculan según la cantidad y calidad de cubos fabricados y las acciones de cooperación.</p>
+        <p class="text-sm text-gray-600">Al finalizar el tiempo, se comparan los resultados y se abre el debate.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="dinamica-cubos.js"></script>
+</body>
+</html>
